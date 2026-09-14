@@ -1,0 +1,35 @@
+name: Build macOS App
+
+# Jalan otomatis tiap ada perubahan yang diupload ke branch main,
+# atau bisa dipicu manual lewat tombol "Run workflow" di tab Actions.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout kode
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pyinstaller
+
+      - name: Build .app
+        run: pyinstaller --windowed --name "LaporanHarianOtomatis" app.py
+
+      - name: Upload hasil build
+        uses: actions/upload-artifact@v4
+        with:
+          name: LaporanHarianOtomatis-macOS
+          path: dist/LaporanHarianOtomatis.app
